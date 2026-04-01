@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>NASH Practice Quiz — PPSSH Reviewer</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=DM+Mono:wght@300;400;500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+<style>
+:root {
+  --bg: #07070F;
+  --surface: #0F0F1C;
+  --surface2: #15152A;
+  --border: rgba(255,255,255,0.07);
+  --gold: #C9A84C;
+  --gold-light: #E8C96A;
+  --gold-dim: rgba(201,168,76,0.12);
+  --blue: #4A9EFF;
+  --green: #50C878;
+  --pink: #FF6B9D;
+  --orange: #FF8C42;
+  --red: #FF4B4B;
+  --text: #E8E8F5;
+  --text-dim: rgba(232,232,245,0.5);
+  --text-muted: rgba(232,232,245,0.25);
+  --radius: 16px;
+  --radius-sm: 10px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 80% 60% at 50% -10%,rgba(201,168,76,0.08) 0%,transparent 60%),radial-gradient(ellipse 60% 40% at 80% 100%,rgba(74,158,255,0.06) 0%,transparent 50%);pointer-events:none;z-index:0}
+
+/* SCREENS */
+.screen{display:none;position:relative;z-index:1;min-height:100vh;padding:0 1.5rem}
+.screen.active{display:block}
+
+/* HOME */
+.container{max-width:960px;margin:0 auto;padding:2.5rem 0}
+.site-header{display:flex;align-items:center;justify-content:space-between;padding-bottom:1.5rem;border-bottom:1px solid var(--border);margin-bottom:2.5rem}
+.logo{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:600;color:var(--gold);letter-spacing:.05em}
+.logo span{color:var(--text-dim);font-weight:300}
+.hero{text-align:center;padding:2rem 0 2.5rem}
+.hero-badge{display:inline-flex;align-items:center;gap:.5rem;background:var(--gold-dim);border:1px solid rgba(201,168,76,0.3);border-radius:100px;padding:.4rem 1rem;font-family:'DM Mono',monospace;font-size:.7rem;color:var(--gold);letter-spacing:.1em;text-transform:uppercase;margin-bottom:1.5rem}
+.hero-title{font-family:'Playfair Display',serif;font-size:clamp(2.2rem,6vw,4.2rem);font-weight:900;line-height:1.05;letter-spacing:-.03em;margin-bottom:1.2rem}
+.hero-title .accent{color:var(--gold)}
+.hero-sub{font-size:1rem;color:var(--text-dim);max-width:460px;margin:0 auto 2.5rem;line-height:1.7}
+.stats-bar{display:flex;align-items:center;justify-content:center;gap:2rem;padding:1.2rem 2rem;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:2.5rem;flex-wrap:wrap}
+.stat-item{text-align:center}
+.stat-value{font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:700;color:var(--gold);display:block}
+.stat-label{font-size:.68rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.08em;font-family:'DM Mono',monospace}
+.stat-div{width:1px;height:2.5rem;background:var(--border)}
+.section-label{font-family:'DM Mono',monospace;font-size:.68rem;color:var(--text-muted);letter-spacing:.15em;text-transform:uppercase;margin-bottom:1rem}
+.domains-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:1rem;margin-bottom:1rem}
+.domain-card{position:relative;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem;cursor:pointer;transition:all .25s ease;text-align:left;width:100%}
+.domain-card:hover{border-color:var(--card-color);transform:translateY(-3px);box-shadow:0 12px 40px var(--card-glow)}
+.d-icon{font-size:1.8rem;margin-bottom:.8rem;display:block}
+.d-tag{font-family:'DM Mono',monospace;font-size:.62rem;color:var(--card-color);letter-spacing:.12em;text-transform:uppercase;margin-bottom:.3rem}
+.d-name{font-family:'Playfair Display',serif;font-size:1rem;font-weight:600;color:var(--text);margin-bottom:.4rem;line-height:1.3}
+.d-desc{font-size:.78rem;color:var(--text-dim);line-height:1.5;margin-bottom:.9rem}
+.d-footer{display:flex;align-items:center;justify-content:space-between}
+.d-count{font-family:'DM Mono',monospace;font-size:.68rem;color:var(--text-muted)}
+.d-score{font-family:'DM Mono',monospace;font-size:.72rem;padding:.22rem .65rem;border-radius:100px}
+.d-arrow{font-size:1.1rem;transition:transform .2s}
+.domain-card:hover .d-arrow{transform:translateX(4px)}
+.mix-card{background:linear-gradient(135deg,var(--surface),var(--surface2));border:1px solid rgba(201,168,76,0.3);border-radius:var(--radius);padding:1.1rem 1.5rem;cursor:pointer;transition:all .25s ease;display:flex;align-items:center;justify-content:space-between;gap:1rem;width:100%;margin-top:.5rem}
+.mix-card:hover{background:var(--gold-dim);transform:translateY(-2px);box-shadow:0 0 40px rgba(201,168,76,0.15)}
+.mix-left{display:flex;align-items:center;gap:1rem}
+.mix-icon{font-size:1.4rem;width:2.8rem;height:2.8rem;display:flex;align-items:center;justify-content:center;background:var(--gold-dim);border:1px solid rgba(201,168,76,0.3);border-radius:var(--radius-sm)}
+.mix-title{font-family:'Playfair Display',serif;font-size:.95rem;font-weight:600;color:var(--gold)}
+.mix-sub{font-size:.73rem;color:var(--text-dim);margin-top:.12rem}
+.footer-note{text-align:center;margin-top:3rem;padding-top:2rem;border-top:1px solid var(--border);font-family:'DM Mono',monospace;font-size:.72rem;color:var(--text-muted);line-height:1.8}
+
+/* QUIZ SCREEN */
+#quiz-screen{display:none;flex-direction:column}
+#quiz-screen.active{display:flex}
+.quiz-header{display:flex;align-items:center;justify-content:space-between;padding:1.5rem 0;border-bottom:1px solid var(--border);gap:1rem;flex-wrap:wrap;max-width:700px;margin:0 auto;width:100%}
+.back-btn{display:flex;align-items:center;gap:.5rem;font-size:.83rem;color:var(--text-dim);cursor:pointer;background:none;border:none;font-family:'Inter',sans-serif;transition:color .2s}
+.back-btn:hover{color:var(--text)}
+.domain-badge{font-family:'DM Mono',monospace;font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;padding:.32rem .9rem;border-radius:100px;border:1px solid currentColor}
+.timer{font-family:'DM Mono',monospace;font-size:1.05rem;font-weight:500;color:var(--text-dim)}
+.timer.warn{color:var(--red);animation:pulse .5s ease infinite alternate}
+@keyframes pulse{from{opacity:1}to{opacity:.4}}
+.progress-track{height:3px;background:var(--border);max-width:700px;margin:0 auto;width:100%}
+.progress-fill{height:100%;transition:width .4s ease;position:relative}
+.progress-fill::after{content:'';position:absolute;right:0;top:-3px;width:9px;height:9px;background:currentColor;border-radius:50%;box-shadow:0 0 8px currentColor}
+.quiz-body{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2rem 0;max-width:700px;margin:0 auto;width:100%}
+.q-counter{font-family:'DM Mono',monospace;font-size:.68rem;color:var(--text-muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:1rem;align-self:flex-start}
+.q-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.8rem;width:100%;margin-bottom:1rem}
+.q-text{font-family:'DM Mono',monospace;font-size:.9rem;font-weight:400;line-height:1.75;color:var(--text)}
+.options{display:flex;flex-direction:column;gap:.65rem;width:100%;margin-bottom:1rem}
+.opt-btn{display:flex;align-items:flex-start;gap:.85rem;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:.9rem 1.1rem;cursor:pointer;transition:all .2s ease;text-align:left;font-family:'Inter',sans-serif;color:var(--text);width:100%}
+.opt-btn:hover:not(:disabled){border-color:rgba(201,168,76,0.4);background:var(--gold-dim)}
+.opt-btn.selected{border-color:var(--gold);background:var(--gold-dim)}
+.opt-btn.correct{border-color:var(--green);background:rgba(80,200,120,0.1);color:var(--green)}
+.opt-btn.wrong{border-color:var(--red);background:rgba(255,75,75,0.07);color:var(--red);opacity:.7}
+.opt-btn:disabled{cursor:default}
+.opt-letter{font-family:'DM Mono',monospace;font-size:.67rem;font-weight:500;color:var(--text-muted);min-width:1.1rem;padding-top:.18rem;letter-spacing:.05em}
+.opt-btn.correct .opt-letter,.opt-btn.selected .opt-letter{color:inherit}
+.opt-text{font-size:.87rem;line-height:1.5}
+.feedback{width:100%;padding:1.1rem 1.4rem;border-radius:var(--radius-sm);margin-bottom:.9rem;border-left:3px solid;animation:slideUp .3s ease}
+@keyframes slideUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.feedback.correct{background:rgba(80,200,120,0.07);border-color:var(--green)}
+.feedback.wrong{background:rgba(255,75,75,0.05);border-color:var(--red)}
+.fb-head{display:flex;align-items:center;gap:.5rem;font-weight:600;font-size:.83rem;margin-bottom:.45rem}
+.feedback.correct .fb-head{color:var(--green)}
+.feedback.wrong .fb-head{color:var(--red)}
+.fb-text{font-size:.8rem;color:var(--text-dim);line-height:1.65}
+.next-btn{background:linear-gradient(135deg,var(--gold),#B8913A);color:#0A0A12;border:none;border-radius:var(--radius-sm);padding:.85rem 1.8rem;font-family:'Inter',sans-serif;font-weight:600;font-size:.87rem;cursor:pointer;transition:all .2s;align-self:flex-end;letter-spacing:.02em}
+.next-btn:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(201,168,76,0.4)}
+.next-btn:disabled{opacity:.35;cursor:not-allowed;transform:none}
+
+/* RESULTS SCREEN */
+#results-screen{display:none}
+#results-screen.active{display:block}
+.results-wrap{max-width:680px;margin:0 auto;padding:3rem 0}
+.results-top{text-align:center;margin-bottom:2.5rem}
+.r-icon{font-size:3.2rem;margin-bottom:.9rem;display:block}
+.r-title{font-family:'Playfair Display',serif;font-size:2.4rem;font-weight:900;margin-bottom:.4rem}
+.r-sub{color:var(--text-dim);font-size:.92rem}
+.score-wrap{display:flex;justify-content:center;margin:2rem 0}
+.score-circle{width:155px;height:155px;border-radius:50%;border:3px solid var(--gold);display:flex;flex-direction:column;align-items:center;justify-content:center;background:radial-gradient(circle,var(--gold-dim),transparent);box-shadow:0 0 40px rgba(201,168,76,0.2)}
+.score-num{font-family:'Playfair Display',serif;font-size:2.7rem;font-weight:900;line-height:1}
+.score-den{font-family:'DM Mono',monospace;font-size:.72rem;color:var(--text-muted);margin-top:.2rem}
+.score-pct{font-family:'DM Mono',monospace;font-size:.82rem;margin-top:.25rem}
+.r-details{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.4rem;margin-bottom:1.2rem}
+.r-details-title{font-family:'DM Mono',monospace;font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;color:var(--text-muted);margin-bottom:.9rem}
+.r-row{display:flex;align-items:center;justify-content:space-between;padding:.7rem 0;border-bottom:1px solid var(--border);font-size:.86rem}
+.r-row:last-child{border-bottom:none}
+.r-label{color:var(--text-dim)}
+.r-val{font-family:'DM Mono',monospace;font-weight:500}
+.r-recommend{background:var(--surface);border-radius:var(--radius-sm);padding:1.1rem 1.4rem;margin-bottom:1.2rem;font-size:.84rem;color:var(--text-dim);line-height:1.65}
+.r-actions{display:flex;gap:1rem;flex-wrap:wrap}
+.btn-primary{flex:1;background:linear-gradient(135deg,var(--gold),#B8913A);color:#0A0A12;border:none;border-radius:var(--radius-sm);padding:.85rem 1.4rem;font-family:'Inter',sans-serif;font-weight:600;font-size:.87rem;cursor:pointer;transition:all .2s;min-width:130px}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 6px 24px rgba(201,168,76,0.4)}
+.btn-secondary{flex:1;background:transparent;color:var(--text);border:1px solid var(--border);border-radius:var(--radius-sm);padding:.85rem 1.4rem;font-family:'Inter',sans-serif;font-weight:500;font-size:.87rem;cursor:pointer;transition:all .2s;min-width:130px}
+.btn-secondary:hover{border-color:var(--gold);color:var(--gold)}
+
+@media(max-width:640px){
+  .hero-title{font-size:2rem}
+  .stats-bar{gap:1rem}
+  .stat-div{display:none}
+  .quiz-body{padding:1.2rem 0}
+  .q-card{padding:1.3rem}
+  .q-text{font-size:.83rem}
+  .r-title{font-size:1.8rem}
+  .score-circle{width:130px;height:130px}
+  .score-num{font-size:2.2rem}
+}
+</style>
+</head>
+<body>
+
+<!-- HOME SCREEN -->
+<div id="home-screen" class="screen active">
+  <div class="container">
+    <header class="site-header">
+      <span class="logo">NASH <span>Reviewer</span></span>
+      <button id="clear-btn" onclick="clearProgress()" style="display:none;background:none;border:1px solid rgba(255,75,75,0.3);color:rgba(255,75,75,0.7);padding:.28rem .75rem;border-radius:6px;font-size:.7rem;cursor:pointer;font-family:'DM Mono',monospace">Clear Progress</button>
+    </header>
+    <div class="hero">
+      <div class="hero-badge">⚡ PPSSH · All Five Domains · Scenario-Based</div>
+      <h1 class="hero-title">Master the<br><span class="accent">NASH Exam</span></h1>
+      <p class="hero-sub">50 policy-grounded scenario questions across all PPSSH domains. Built for School Head candidates in the Philippine DepEd system.</p>
+    </div>
+    <div class="stats-bar">
+      <div class="stat-item"><span class="stat-value">50</span><span class="stat-label">Questions</span></div>
+      <div class="stat-div"></div>
+      <div class="stat-item"><span class="stat-value">5</span><span class="stat-label">Domains</span></div>
+      <div class="stat-div"></div>
+      <div class="stat-item"><span class="stat-value" id="stat-attempted">0</span><span class="stat-label">Attempted</span></div>
+      <div class="stat-div"></div>
+      <div class="stat-item"><span class="stat-value" id="stat-accuracy" style="color:var(--gold)">—</span><span class="stat-label">Accuracy</span></div>
+    </div>
+    <p class="section-label">Choose a Domain</p>
+    <div class="domains-grid" id="domains-grid"></div>
+    <button class="mix-card" onclick="startQuiz('mix')">
+      <div class="mix-left">
+        <div class="mix-icon">🎯</div>
+        <div>
+          <div class="mix-title">All Domains Mix</div>
+          <div class="mix-sub">50 questions · Random shuffle · Full NASH simulation</div>
+        </div>
+      </div>
+      <span style="color:var(--gold);font-size:1.2rem">→</span>
+    </button>
+    <div class="footer-note">
+      Based on PPSSH · DO 8 s. 2015 · DO 36 s. 2016 · RA 9184 & related DepEd issuances<br>
+      Built for Sir Orlando V. Pasion, Jr. · NNHS · SDO Urdaneta City · Region I
+    </div>
+  </div>
+</div>
+
+<!-- QUIZ SCREEN -->
+<div id="quiz-screen" class="screen">
+  <div class="quiz-header">
+    <button class="back-btn" onclick="goHome()">← Domains</button>
+    <span id="domain-badge" class="domain-badge"></span>
+    <span id="timer" class="timer">⏱ 01:00</span>
+  </div>
+  <div class="progress-track">
+    <div id="progress-fill" class="progress-fill" style="width:0%;color:var(--gold)"></div>
+  </div>
+  <div class="quiz-body">
+    <div id="q-counter" class="q-counter"></div>
+    <div class="q-card"><p id="q-text" class="q-text"></p></div>
+    <div id="options" class="options"></div>
+    <div id="feedback" class="feedback" style="display:none"></div>
+    <button id="next-btn" class="next-btn" disabled onclick="nextQuestion()">Next Question →</button>
+  </div>
+</div>
+
+<!-- RESULTS SCREEN -->
+<div id="results-screen" class="screen">
+  <div class="results-wrap">
+    <div class="results-top">
+      <span id="r-icon" class="r-icon"></span>
+      <h1 id="r-title" class="r-title"></h1>
+      <p id="r-sub" class="r-sub"></p>
+    </div>
+    <div class="score-wrap">
+      <div id="score-circle" class="score-circle">
+        <span id="score-num" class="score-num"></span>
+        <span id="score-den" class="score-den"></span>
+        <span id="score-pct" class="score-pct"></span>
+      </div>
+    </div>
+    <div class="r-details">
+      <div class="r-details-title">Session Summary</div>
+      <div class="r-row"><span class="r-label">✅ Correct</span><span id="r-correct" class="r-val"></span></div>
+      <div class="r-row"><span class="r-label">❌ Wrong</span><span id="r-wrong" class="r-val"></span></div>
+      <div class="r-row"><span class="r-label">📊 Accuracy</span><span id="r-pct" class="r-val"></span></div>
+      <div class="r-row"><span class="r-label">🎯 Passing Mark (75%)</span><span id="r-pass" class="r-val"></span></div>
+      <div class="r-row"><span class="r-label">📋 Domain</span><span id="r-domain" class="r-val" style="font-size:.78rem"></span></div>
+    </div>
+    <div id="r-recommend" class="r-recommend"></div>
+    <div class="r-actions">
+      <button class="btn-primary" onclick="retryQuiz()">🔄 Try Again</button>
+      <button class="btn-secondary" onclick="goHome()">← Back to Domains</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── DATA ─────────────────────────────────────────────────────────────────────
+const DOMAINS = {
+  1: {
+    name:"Domain 1", full:"Leading Strategically",
+    color:"#C9A84C", glow:"rgba(201,168,76,0.3)", icon:"⚡",
+    desc:"Vision, strategic planning & school improvement",
+    qs:[
+      {q:"Principal Santos notices that the school's SIP targets were not met for two consecutive years. As a strategic leader, what should be her FIRST action?",
+       opts:["Immediately revise the SIP targets downward to make them more achievable","Conduct a root cause analysis to identify systemic barriers to target achievement","Report the non-attainment directly to the Schools Division Superintendent","Conduct a meeting with teachers to assign individual accountability"],
+       ans:1,exp:"Strategic leadership requires data-driven decision-making. Root Cause Analysis (RCA) is the essential first step — it identifies systemic barriers rather than treating surface-level symptoms. This is a core PPSSH Domain 1 indicator on evidence-based strategic planning."},
+      {q:"A newly appointed principal wants to develop the school's vision. Which approach BEST demonstrates strategic leadership under PPSSH Domain 1?",
+       opts:["Adopt the Division's vision directly to ensure vertical alignment","Craft the vision alone to demonstrate decisive, authoritative leadership","Engage all stakeholders — teachers, students, parents, and community — in a participatory vision-crafting process","Use the previous principal's vision to ensure program continuity"],
+       ans:2,exp:"PPSSH Domain 1 emphasizes participatory leadership. A school vision developed with all stakeholders creates shared ownership, increases buy-in, and ensures the vision reflects the community's genuine aspirations — a core indicator of strategic leadership competency."},
+      {q:"During SIP implementation, the principal discovers a key program is exceeding its budget. What is the most strategically sound response?",
+       opts:["Stop the program immediately to prevent further budget overrun","Continue without changes and report to DepEd at year-end","Conduct a mid-year program review, realign resources, and document adjustments in the M&E report","Transfer excess to supplementary funds without documentation"],
+       ans:2,exp:"Strategic leaders use Monitoring and Evaluation (M&E) to make real-time adjustments. Mid-year reviews with proper documentation ensure accountability, transparency, and continued alignment with SIP goals — key PPSSH Domain 1 indicators."},
+      {q:"A principal is presenting the school's improvement plan to the School Governing Council. What document should she primarily reference?",
+       opts:["Annual Implementation Plan (AIP)","School Report Card (SRC)","School Improvement Plan (SIP)","Annual Procurement Plan (APP)"],
+       ans:2,exp:"The SIP is the primary three-year strategic document that captures the school's improvement roadmap. It is the essential reference for SGC presentations on school direction, priorities, and long-term goals under PPSSH Domain 1."},
+      {q:"Principal Reyes wants to ensure school programs are aligned with DepEd's broader mandate. Which framework should PRIMARILY guide her strategic planning?",
+       opts:["K to 12 Curriculum Guide","Philippine Professional Standards for School Heads (PPSSH)","Basic Education Development Plan (BEDP)","Results-Based Performance Management System (RPMS)"],
+       ans:2,exp:"The Basic Education Development Plan (BEDP) is DepEd's long-term strategic framework. School improvement plans must align with BEDP goals to ensure national coherence. PPSSH guides competency standards, while BEDP provides the strategic direction for educational programs."},
+      {q:"A principal observes that her school's dropout rate increased this school year. Which strategic action BEST reflects Domain 1 competencies?",
+       opts:["Immediately implement remedial classes for all students","Use School Report Card data to analyze patterns, identify root causes, and develop targeted intervention programs","Issue a memo to teachers holding them accountable for the increase","Request additional budget from the Division for intervention programs"],
+       ans:1,exp:"Strategic leaders are data-driven. Using SRC data to analyze dropout patterns demonstrates evidence-based decision-making — a key Domain 1 indicator. Targeted interventions developed from data analysis are more effective than generic solutions."},
+      {q:"The principal facilitates crafting of the Annual Implementation Plan. What must she ensure above all?",
+       opts:["The AIP contains all DepEd programs regardless of school context","The AIP activities are aligned with SIP priorities and available resources","The AIP is submitted before the deadline to avoid sanctions","The AIP reflects only programs teachers can implement independently"],
+       ans:1,exp:"The AIP operationalizes the SIP into a yearly action plan. Strategic alignment between AIP activities, SIP priorities, and available resources ensures plans are realistic, feasible, and impactful — a core PPSSH Domain 1 competency."},
+      {q:"A principal uses National Achievement Test (NAT) results to plan school improvement programs. This practice BEST demonstrates which Domain 1 indicator?",
+       opts:["Communicating the school vision to stakeholders","Managing school operations efficiently","Using data and research to guide school improvement planning","Building partnerships with external stakeholders"],
+       ans:2,exp:"Using NAT results to inform planning is a direct application of data-driven decision-making — one of the strongest indicators of Domain 1. It shows the principal's ability to interpret educational data and translate it into actionable improvement strategies."},
+      {q:"Which statement BEST describes the role of the principal under PPSSH Domain 1 in relation to the school community?",
+       opts:["The principal alone decides the school's strategic direction","The principal facilitates shared leadership and collaboratively sets the school's direction with all stakeholders","The principal implements Division directives without local adaptation","The principal delegates all planning functions to department heads"],
+       ans:1,exp:"PPSSH Domain 1 explicitly emphasizes shared and distributed leadership. The principal as strategic leader facilitates participatory processes where all stakeholders collaborate in setting direction — not a top-down, unilateral approach."},
+      {q:"Principal Bautista is preparing for a DEDP alignment workshop. What is the PRIMARY purpose of this activity?",
+       opts:["To comply with DepEd's reporting requirement","To ensure school plans contribute to divisional and national education goals","To present the school's accomplishments to the Division","To validate the school's budget allocation for the year"],
+       ans:1,exp:"DEDP alignment ensures that school-level plans contribute to broader divisional goals, which in turn align with national BEDP targets. This multi-level strategic alignment is a hallmark of Domain 1 leadership."}
+    ]
+  },
+  2: {
+    name:"Domain 2", full:"Managing School Operations & Resources",
+    color:"#4A9EFF", glow:"rgba(74,158,255,0.3)", icon:"🏛️",
+    desc:"Financial management, procurement & facilities",
+    qs:[
+      {q:"The school receives its MOOE allocation. Under RA 9184 and DepEd guidelines, what must the principal do FIRST before any procurement activity?",
+       opts:["Identify the lowest-priced supplier in the local market","Prepare the Annual Procurement Plan (APP) aligned with the school's identified needs","Immediately purchase the most urgently needed supplies","Request procurement authority from the Schools Division Office"],
+       ans:1,exp:"RA 9184 (Government Procurement Reform Act) requires an Annual Procurement Plan before any procurement. The APP ensures all purchases are planned, budgeted, and aligned with actual school needs — a fundamental requirement for transparent and accountable financial management."},
+      {q:"A parent complains that the school canteen sells food above the prescribed price. What is the principal's MOST appropriate action?",
+       opts:["Ignore the complaint as canteen operations are self-managed","Immediately close the canteen pending formal investigation","Review the approved price list with the canteen operator and enforce compliance or impose sanctions per the MOA","Refer the complaint directly to the Division Office"],
+       ans:2,exp:"The principal is responsible for school canteen operations under DepEd Order No. 13 s. 2017. The proper response involves reviewing the MOA, enforcing the approved price list, and taking appropriate corrective action — demonstrating Domain 2 operational management competency."},
+      {q:"The school has unfunded repair needs for a dilapidated classroom. What is the MOST appropriate first action for the principal?",
+       opts:["Collect voluntary contributions from parents to fund the repair","Document the damage, submit a written request to the SDO, and explore funding sources like LGSF or SEF","Use the MOOE for major classroom repairs regardless of guidelines","Wait for the Division to identify and address the problem"],
+       ans:1,exp:"Facility management under Domain 2 requires proper documentation and use of appropriate funding channels. MOOE has specific allowable expenditures; major repairs require separate funding like LGSF or SEF. Proper channels ensure accountability."},
+      {q:"A principal discovers that a previous official may have misused school funds. What is her ethical and legal obligation?",
+       opts:["Handle it internally to protect the school's reputation","Document evidence and report to DepEd's Internal Audit Service and proper authorities per civil service rules","Confront the official directly before taking any formal action","Ignore it as it occurred before her tenure"],
+       ans:1,exp:"Financial accountability under Domain 2 includes reporting fund misuse. The principal has a legal and ethical obligation to report through proper channels — DepEd Internal Audit, COA, or the Ombudsman — regardless of when the misuse occurred."},
+      {q:"The School Property Custodian reports that several pieces of equipment are no longer functional. What process must the principal initiate?",
+       opts:["Dispose of the equipment immediately to clear storage space","Conduct inspection, prepare an IIRUP, and follow COA rules on property disposal","Return the equipment to the Division for disposal","Donate the equipment to community members without documentation"],
+       ans:1,exp:"Disposal of government property requires strict COA compliance. The Inventory and Inspection Report of Unserviceable Property (IIRUP) process, inspection by authorized personnel, and proper documentation are mandatory. Unauthorized disposal violates property management rules under Domain 2."},
+      {q:"Principal Gomez wants to maximize the school's MOOE for priority programs. Which practice BEST reflects sound financial management?",
+       opts:["Spending all MOOE by Q1 to avoid lapsing","Using MOOE only for cash advances to individual teachers for flexibility","Regularly monitoring MOOE utilization against the APP and adjusting within allowable guidelines to ensure 100% obligation","Saving all MOOE for the last quarter to fund year-end activities"],
+       ans:2,exp:"Effective financial management requires regular monitoring of budget utilization. Aligning actual spending with the APP and ensuring full obligation within the fiscal year maximizes resource use for educational programs and demonstrates fiscal accountability — a Domain 2 core indicator."},
+      {q:"A newly promoted principal inherits a school with an incomplete property inventory. What should she do to establish accountability?",
+       opts:["Accept the inventory as-is to avoid conflict with outgoing officials","Conduct a physical inventory count, reconcile with existing records, and document discrepancies in a formal turnover report","Request a new set of equipment from the Division to replace missing items","File an immediate complaint against the outgoing principal"],
+       ans:1,exp:"Proper property turnover requires a physical inventory count, reconciliation with official records, and a documented turnover report. This protects the incoming principal from liability for pre-existing discrepancies and establishes baseline accountability — a key Domain 2 competency."},
+      {q:"A teacher requests the principal to purchase instructional materials using MOOE. What must the principal verify FIRST?",
+       opts:["Whether the teacher has a good RPMS performance rating","Whether the purchase is in the APP and complies with allowable MOOE expenditures under DepEd guidelines","Whether similar materials are available from DepEd Central Office","Whether the purchase amount exceeds five thousand pesos"],
+       ans:1,exp:"MOOE expenditures must comply with DepEd-prescribed allowable uses and must be reflected in the Annual Procurement Plan. Verifying compliance before any purchase demonstrates Domain 2 competency in financial management and accountability."},
+      {q:"The principal wants to ensure all school records are properly managed. Which issuance primarily governs school records management?",
+       opts:["DO 8 s. 2015 (Classroom Assessment Policy)","RA 9470 (National Archives of the Philippines Act) and applicable NGAS guidelines","DO 36 s. 2016 (Awards and Recognition)","DO 42 s. 2017 (PPST)"],
+       ans:1,exp:"School records management is governed by RA 9470 and related DepEd guidelines including the New Government Accounting System (NGAS). Proper records management is a key Domain 2 indicator covering documentation, retention schedules, and disposal of official school records."},
+      {q:"Under RA 9184 as amended, what governs the threshold amounts for alternative procurement modes such as Small Value Procurement?",
+       opts:["The Commission on Audit (COA) sets annual thresholds","The Department of Budget and Management (DBM) issues annual circulars","The Government Procurement Policy Board (GPPB) sets and updates thresholds periodically","The Schools Division Superintendent approves case-by-case thresholds"],
+       ans:2,exp:"Under RA 9184 as amended by RA 12009, the Government Procurement Policy Board (GPPB) sets and periodically updates thresholds for alternative procurement modes including Small Value Procurement. School heads must know the current GPPB thresholds for compliant procurement decisions."}
+    ]
+  },
+  3: {
+    name:"Domain 3", full:"Focusing on Teaching & Learning",
+    color:"#50C878", glow:"rgba(80,200,120,0.3)", icon:"📚",
+    desc:"Curriculum, instruction & assessment practices",
+    qs:[
+      {q:"A principal observes that some teachers are not following the MATATAG curriculum guides. What is the MOST appropriate action?",
+       opts:["Issue a memorandum warning teachers of disciplinary action","Conduct a curriculum orientation and coaching session, then monitor implementation through classroom observations","Report the teachers to the SDO for curriculum non-compliance","Replace non-compliant teachers with those who know the curriculum"],
+       ans:1,exp:"Domain 3 emphasizes instructional leadership. The principal's role is to support teachers through professional development and coaching, not punitive action. Observation followed by feedback and support is the most effective approach to improving curriculum fidelity."},
+      {q:"Under DO 8 s. 2015, a student's Percentage Score of 70% in a quarterly examination transmutes to what Grade equivalent and descriptor?",
+       opts:["Grade 70 — Did Not Meet Expectations","Grade 80 — Satisfactory","Grade 75 — Fairly Satisfactory","Grade 85 — Very Satisfactory"],
+       ans:1,exp:"Under DO 8 s. 2015, a Percentage Score of 70 transmutes to a grade of 80 using the prescribed transmutation table. A grade of 80–84 corresponds to the descriptor 'Satisfactory.' This demonstrates the critical distinction between raw PS and transmuted grades in DepEd's grading system."},
+      {q:"Principal Bautista wants to improve the quality of formative assessment in her school. Which action MOST directly achieves this goal?",
+       opts:["Requiring teachers to give more written tests each week","Facilitating LAC sessions on differentiated formative assessment strategies and monitoring classroom application","Purchasing standardized test materials from commercial publishers","Increasing the weight of Written Works in the grading components"],
+       ans:1,exp:"Formative assessment improvement requires building teacher capacity through professional development (LAC sessions) and monitoring classroom application. This integrated approach is the most effective way to improve assessment quality, integrating Domain 3 and Domain 4 competencies."},
+      {q:"Data shows Grade 8 students in a school consistently score below the Division average in Mathematics. What should the principal do FIRST?",
+       opts:["Require all Math teachers to attend additional training at their own expense","Analyze the specific learning competencies where students underperform to design targeted interventions","Transfer the weakest-performing Math teacher to a non-teaching position","Report the situation to the SDO and wait for Division-level intervention"],
+       ans:1,exp:"Data-driven instructional leadership requires drilling down to specific competency-level gaps before designing interventions. Generic solutions are ineffective; targeted interventions based on competency-level data are more efficient and demonstrate strong Domain 3 leadership."},
+      {q:"A principal reviews a teacher's lesson plan and finds the learning objectives are not aligned with the assessment tasks. What should she do?",
+       opts:["Return the lesson plan with a failing mark on the checklist","Provide written feedback and schedule a coaching conference to discuss objective-instruction-assessment alignment","Approve the lesson plan to maintain a positive relationship with the teacher","Rewrite the lesson plan herself to ensure quality"],
+       ans:1,exp:"Instructional leadership requires constructive feedback through coaching. Alignment between learning objectives, instruction, and assessment (backward design) is fundamental to effective teaching. The principal's role is to guide improvement, not penalize or replace teacher agency."},
+      {q:"Which BEST describes the principal's role in curriculum implementation under Domain 3?",
+       opts:["Administrative supervisor who ensures curriculum documents are on file","Instructional leader who monitors, supports, and continuously improves teaching and learning","Curriculum writer who develops all teaching materials for teachers","External evaluator who rates teacher performance at year-end only"],
+       ans:1,exp:"The principal as instructional leader is Domain 3's central concept. It involves active engagement in monitoring teaching quality, supporting teachers, and driving continuous improvement of learning outcomes — beyond administrative oversight."},
+      {q:"Which DepEd issuance provides the PRIMARY framework for grading and assessment in the K-12 Basic Education Program?",
+       opts:["DO 42 s. 2017 (Philippine Professional Standards for Teachers)","DO 8 s. 2015 (Policy Guidelines on Classroom Assessment)","DO 36 s. 2016 (Awards and Recognition)","DO 21 s. 2019 (MATATAG Curriculum)"],
+       ans:1,exp:"DepEd Order No. 8 s. 2015 provides the policy guidelines on classroom assessment for the K-12 Basic Education Program, including the grading system, computation of grades, and descriptor ranges. It is the primary reference for all assessment decisions at the school level."},
+      {q:"A principal wants to strengthen reading literacy across all subject areas. Which approach BEST demonstrates cross-curricular instructional leadership?",
+       opts:["Assign all literacy-related tasks solely to the English department","Develop a school-wide reading program integrated across all subjects, with all teachers trained in literacy strategies","Purchase more reading materials for the school library","Add more English class periods in the class program"],
+       ans:1,exp:"Cross-curricular literacy is a best practice in instructional leadership. A school-wide reading program that engages ALL subject teachers reflects an understanding that literacy is a shared responsibility across disciplines — a Domain 3 best practice."},
+      {q:"Under the PPST, classroom observation by the principal should be followed by which critical step?",
+       opts:["Immediate submission of observation results to the Division Office","A post-observation conference providing specific, evidence-based feedback and coaching to the teacher","Direct computation of the teacher's final performance rating","Distribution of observation results to all teachers as a benchmark standard"],
+       ans:1,exp:"The observation-feedback cycle is central to instructional leadership. A post-observation conference with specific, evidence-based feedback transforms observation from an administrative exercise into a powerful professional development tool — a key Domain 3 and Domain 4 competency."},
+      {q:"The MATATAG curriculum introduces a spiral progression approach. As instructional leader, how should the principal support teacher implementation?",
+       opts:["Allow teachers to use the old K-12 curriculum until they feel comfortable","Ensure teachers understand the conceptual framework of spiral progression through capability-building and coaching","Focus only on Grade 7 teachers since spiral progression begins there","Defer to Division curriculum specialists for all implementation decisions"],
+       ans:1,exp:"Spiral progression means concepts are revisited and deepened across grade levels. Principals must ensure ALL teachers understand how their teaching builds on prior learning and prepares students for future concepts. Capability-building and coaching are core Domain 3 competencies."}
+    ]
+  },
+  4: {
+    name:"Domain 4", full:"Developing Self and Others",
+    color:"#FF6B9D", glow:"rgba(255,107,157,0.3)", icon:"🌱",
+    desc:"Professional development, RPMS & teacher growth",
+    qs:[
+      {q:"A principal identifies that most teachers are in the Proficient career stage. Which professional development approach is MOST aligned with their needs?",
+       opts:["Basic orientation on classroom management fundamentals","Advanced coaching on differentiated instruction and reflective practice to move them toward Highly Proficient","Administrative training on school management and operations","Mandatory attendance in all Division-level seminars and conferences"],
+       ans:1,exp:"Domain 4 requires career-stage appropriate professional development. Proficient teachers have mastered basics; they need advanced development to progress to Highly Proficient. Using PPST career stage indicators to guide PD planning is a core Domain 4 competency."},
+      {q:"Which document serves as the PRIMARY basis for identifying teachers' professional development needs under the RPMS-PPST system?",
+       opts:["Certificates of appearance in training seminars","Classroom Observation Tool (COT) results and IPCRF Development Plan","Teachers' diplomas and transcripts of records","Division Training and Development Calendar"],
+       ans:1,exp:"The COT results and IPCRF Development Plan are the primary bases for identifying PD needs. The IPCRF captures performance gaps; the Development Plan translates those gaps into learning needs. This data-driven approach to PD planning is central to Domain 4."},
+      {q:"A principal wants to establish a sustainable school-based learning culture. Which structure MOST effectively supports this?",
+       opts:["Quarterly Division-level training attendance requirements","A functional School Learning Action Cell (SLAC) that meets regularly and translates learning into classroom practice","Individual teacher reading of professional books and articles","Building a collection of online webinar completion certificates"],
+       ans:1,exp:"The SLAC is DepEd's primary mechanism for school-based professional development. A functional, regularly meeting SLAC that links learning to practice creates a sustainable, contextualized PD culture — the highest expression of Domain 4 leadership."},
+      {q:"The RPMS cycle for teachers follows which sequence of phases?",
+       opts:["Monitoring → Planning → Coaching → Evaluation","Performance Planning → Monitoring and Coaching → Evaluation → Development Planning","Evaluation → Planning → Monitoring → Coaching","Coaching → Monitoring → Evaluation → Planning"],
+       ans:1,exp:"The RPMS cycle follows: Performance Planning (IPCRF target-setting) → Performance Monitoring and Coaching → Performance Review and Evaluation → Development Planning. This continuous cycle drives improvement and is the backbone of Domain 4 leadership."},
+      {q:"A teacher consistently underperforms despite receiving feedback. Under RPMS, what is the principal's next appropriate action?",
+       opts:["Immediately file a formal complaint for dismissal","Provide additional coaching, document all interventions, develop a Performance Improvement Plan (PIP), and monitor progress","Transfer the teacher to a different school","Ignore the situation as it reflects poorly on the school"],
+       ans:1,exp:"Domain 4 requires principals to support struggling teachers through structured interventions before punitive action. A Performance Improvement Plan (PIP) with documented coaching, specific targets, timelines, and monitoring demonstrates care for teacher development while ensuring due process compliance."},
+      {q:"Principal Santos is assessed as 'Proficient' in a specific PPSSH indicator. What does this career stage descriptor mean?",
+       opts:["She has just started developing the competency","She consistently demonstrates the competency and begins to support others in developing it","She independently mentors other school heads in the competency system-wide","She has not yet demonstrated the competency adequately"],
+       ans:1,exp:"Under PPSSH, 'Proficient' means the school head consistently demonstrates the competency and begins supporting others in developing it. 'Highly Proficient' indicates active mentoring, while 'Distinguished' reflects system-wide leadership influence. Understanding career stage descriptors is essential for Domain 4 self-development."},
+      {q:"Principal Reyes regularly reflects on her leadership practice and seeks feedback from peers and supervisors. This BEST demonstrates which Domain 4 indicator?",
+       opts:["Developing teachers' professional competence","Practicing personal and professional development through reflection and feedback-seeking","Building community stakeholder relationships","Managing school operations and resources effectively"],
+       ans:1,exp:"Self-reflection and feedback-seeking are core Domain 4 indicators for school heads. PPSSH emphasizes that effective leaders model the growth mindset they want to cultivate in teachers — reflective practitioners who are open to continuous improvement."},
+      {q:"The principal facilitates a LAC session on inclusive education for learners with disabilities. Which Domain 4 function does this MOST demonstrate?",
+       opts:["Managing school resources and budget","Building community and external partnerships","Leading professional development to address identified teacher learning needs","Implementing DepEd directives and memoranda"],
+       ans:2,exp:"Facilitating LAC sessions to address specific teacher learning needs (inclusive education strategies) directly demonstrates Domain 4 leadership — the principal as architect of professional development. This is especially strong when the LAC topic is data-driven and contextually relevant to identified school needs."},
+      {q:"Which BEST describes an effective Individual Learning Action Plan (ILAP) for a school head?",
+       opts:["A list of seminars and trainings attended in the past year","A reflection essay about the principal's leadership journey","A structured document identifying competency gaps, setting learning goals, outlining development activities, and establishing timelines aligned with PPSSH indicators","A certification from the Division confirming completion of required training"],
+       ans:2,exp:"An effective ILAP is forward-looking and structured: it identifies gaps (from PPSSH self-assessment), sets specific learning goals, plans development activities, and tracks progress. It is not a retrospective list — this distinction separates genuine self-development from compliance documentation."},
+      {q:"A principal wants to recognize a teacher demonstrating exemplary practice and mentoring colleagues. Under the RPMS process, this should be reflected in:",
+       opts:["An automatic basic salary adjustment","The teacher's Summary Rating Form with Outstanding or Distinguished performance rating","Automatic promotion to Master Teacher position","Transfer to the Division Office as curriculum specialist"],
+       ans:1,exp:"Exemplary performance, including peer mentoring, should be documented and reflected in the teacher's RPMS rating. Outstanding performance ratings can serve as basis for step increment, promotion, or recognition programs — motivating continued excellence. Domain 4 leaders use RPMS as both a development and recognition tool."}
+    ]
+  },
+  5: {
+    name:"Domain 5", full:"Building Connections",
+    color:"#FF8C42", glow:"rgba(255,140,66,0.3)", icon:"🤝",
+    desc:"Stakeholder engagement & community partnerships",
+    qs:[
+      {q:"The School Governing Council is scheduled to approve the school's AIP. What is the principal's PRIMARY responsibility in this process?",
+       opts:["Present the AIP unilaterally and request immediate approval","Facilitate a participatory SGC meeting where stakeholders review, provide input, and endorse the AIP","Submit the AIP to the Division without SGC approval to meet the deadline","Allow the PTA president to finalize the AIP independently"],
+       ans:1,exp:"The SGC is the primary governance body for school decision-making. Facilitating genuine participatory SGC processes — not ceremonial approval — is the principal's Domain 5 responsibility. This ensures stakeholder ownership and accountability for school programs and decisions."},
+      {q:"A principal wants to establish a partnership with a local business for a reading program. What must she secure BEFORE formalizing any partnership?",
+       opts:["Verbal commitment from the business owner is sufficient","A duly executed Memorandum of Agreement (MOA) following established DepEd protocols","A PTA resolution supporting the partnership","Barangay council endorsement and certification"],
+       ans:1,exp:"All external partnerships must be formalized through an MOA reviewed and approved per DepEd protocols. This ensures legal protection for the school, defines roles and obligations, and prevents exploitation — a core Domain 5 requirement for sustainable stakeholder engagement."},
+      {q:"Parents approach the principal with concerns about the quality of instruction in certain subjects. What BEST reflects Domain 5 leadership?",
+       opts:["Defend teachers and dismiss the parents' concerns","Listen actively, validate concerns, investigate the situation, and create a feedback mechanism for ongoing parent-school communication","Refer parents directly to the Division Office to handle their concerns","Ask parents to submit concerns in writing only and wait for a formal response"],
+       ans:1,exp:"Domain 5 requires creating open, trust-based channels with stakeholders. Active listening, validation, investigation, and establishing feedback mechanisms demonstrate responsive and accountable leadership — building genuine community partnership rather than defensive posturing."},
+      {q:"Under DepEd Order No. 83 s. 2012, the School Governing Council is composed of which stakeholders?",
+       opts:["Principal, Division Superintendent, and Regional Director only","School head, parents, teachers, community representatives, and in secondary schools, student government representatives","Principal, PTA officers, and Barangay Captain only","All teachers and non-teaching support staff of the school"],
+       ans:1,exp:"Under DO 83 s. 2012, the SGC includes the school head, PTA representatives, teachers, community stakeholders (LGU, business sector, alumni, NGO), and for secondary schools, the Supreme Student Government president. This diverse composition ensures multi-stakeholder governance."},
+      {q:"During Brigada Eskwela, the school receives cash donations from local businesses. How should these be handled?",
+       opts:["Kept in a personal account for immediate school use","Officially receipted, deposited in the school's trust fund account, and liquidated with proper documentation per COA rules","Used immediately without documentation to avoid bureaucratic delays","Returned to donors as DepEd does not accept cash donations"],
+       ans:1,exp:"All cash donations must be officially receipted, deposited in the school trust fund, and liquidated per COA rules. This ensures transparency, accountability, and legal compliance. Failure to follow proper procedures exposes the principal to administrative and criminal liability."},
+      {q:"The principal plans a community immersion activity for teachers. What is the PRIMARY purpose under Domain 5?",
+       opts:["To fulfill teachers' community service requirement","To deepen teachers' understanding of students' home environments and community assets to make teaching more responsive","To comply with a DepEd memorandum on community involvement","To showcase the school's community relations programs to the Division"],
+       ans:1,exp:"Community immersion builds teachers' contextual understanding of students' lives — economic realities, family structures, and community assets. This knowledge makes instruction more culturally responsive and relevant. Domain 5 leaders use community engagement as a tool to improve teaching and learning."},
+      {q:"A principal is addressing a conflict between two parent factions in the PTA. What leadership approach BEST reflects Domain 5?",
+       opts:["Take sides with the parent group representing the majority","Use mediation and consensus-building to facilitate dialogue, identify common ground, and restore unity focused on student welfare","Dissolve the PTA temporarily until parents resolve their differences","Refer the conflict to the Division Office for resolution"],
+       ans:1,exp:"Domain 5 leaders are skilled in building and maintaining collaborative relationships. Using mediation and consensus-building — keeping focus on student welfare — demonstrates the highest level of stakeholder relationship management and conflict resolution competency."},
+      {q:"Which tool is specifically designed to communicate school performance data to parents and community stakeholders?",
+       opts:["School Improvement Plan (SIP)","Annual Procurement Plan (APP)","School Report Card (SRC)","Individual Performance Commitment and Review Form (IPCRF)"],
+       ans:2,exp:"The School Report Card (SRC) is specifically designed to communicate school performance data to stakeholders in an accessible format. It covers enrollment, participation, completion, cohort survival, and NAT results. Presenting the SRC to stakeholders is a key Domain 5 transparency practice."},
+      {q:"A local official questions the principal at a barangay council meeting about the school's academic performance. This is an example of:",
+       opts:["A threat to school autonomy that should be diplomatically deflected","An accountability opportunity requiring transparent sharing of school performance data and collaborative problem-solving","An administrative function that the Division Office should handle","A routine community gathering with no special governance significance"],
+       ans:1,exp:"Community accountability to local governance structures is a Domain 5 competency. When local officials ask about school performance, the principal should embrace it as a transparency and partnership opportunity — sharing data, acknowledging challenges, and inviting collaborative solutions."},
+      {q:"Principal Dela Cruz notices dropout rates increase during periods of family economic hardship. Which Domain 5 action would MOST address this?",
+       opts:["Lower academic standards during economically difficult periods","Build partnerships with LGUs, NGOs, and businesses to establish scholarship programs, feeding programs, and family livelihood support","Advise economically struggling students to temporarily stop schooling","Request additional teachers from the Division to handle larger class sizes"],
+       ans:1,exp:"Domain 5 leadership involves leveraging community partnerships to address social barriers to education. Building a support network (LGUs, NGOs, businesses) that addresses economic root causes of dropout is the most sustainable and impactful community-based intervention."}
+    ]
+  }
+};
+
+// ── STATE ─────────────────────────────────────────────────────────────────────
+let currentDomain = null;
+let quizQuestions = [];
+let currentIdx = 0;
+let answered = false;
+let results = [];
+let timerInterval = null;
+let timeLeft = 60;
+const LETTERS = ['A','B','C','D'];
+
+// ── UTILITIES ─────────────────────────────────────────────────────────────────
+function shuffle(arr){const a=[...arr];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0)}
+function getScores(){try{return JSON.parse(localStorage.getItem('nash-scores')||'{}')}catch{return{}}}
+function saveScore(domainId,correct){try{const s=getScores();const p=s[domainId]||{correct:0,attempts:0};s[domainId]={correct:p.correct+(correct?1:0),attempts:p.attempts+1};localStorage.setItem('nash-scores',JSON.stringify(s))}catch{}}
+
+// ── HOME ──────────────────────────────────────────────────────────────────────
+function renderHome(){
+  const scores=getScores();
+  let totalAtt=0,totalCorr=0;
+  Object.values(scores).forEach(s=>{totalAtt+=(s.attempts||0);totalCorr+=(s.correct||0)});
+  document.getElementById('stat-attempted').textContent=totalAtt;
+  const acc=totalAtt>0?Math.round(totalCorr/totalAtt*100):0;
+  const accEl=document.getElementById('stat-accuracy');
+  accEl.textContent=totalAtt>0?acc+'%':'—';
+  accEl.style.color=acc>=75?'var(--green)':acc>0?'var(--orange)':'var(--gold)';
+  const clearBtn=document.getElementById('clear-btn');
+  clearBtn.style.display=totalAtt>0?'block':'none';
+
+  const grid=document.getElementById('domains-grid');
+  grid.innerHTML='';
+  Object.entries(DOMAINS).forEach(([id,d])=>{
+    const sc=scores[id];
+    const pct=sc&&sc.attempts>0?Math.round(sc.correct/sc.attempts*100):null;
+    const scoreHTML=pct!==null
+      ?`<span class="d-score" style="color:${pct>=75?'var(--green)':'var(--orange)'};border-color:${pct>=75?'rgba(80,200,120,0.3)':'rgba(255,140,66,0.3)'};background:${pct>=75?'rgba(80,200,120,0.08)':'rgba(255,140,66,0.08)'}">Best: ${pct}%</span>`
+      :`<span class="d-arrow" style="color:${d.color}">→</span>`;
+    const card=document.createElement('button');
+    card.className='domain-card';
+    card.style.cssText=`--card-color:${d.color};--card-glow:${d.glow}`;
+    card.innerHTML=`<span class="d-icon">${d.icon}</span><div class="d-tag">${d.name}</div><div class="d-name">${d.full}</div><div class="d-desc">${d.desc}</div><div class="d-footer"><span class="d-count">${d.qs.length} questions</span>${scoreHTML}</div>`;
+    card.onclick=()=>startQuiz(id);
+    grid.appendChild(card);
+  });
+}
+
+function clearProgress(){if(confirm('Clear all progress? This cannot be undone.')){localStorage.removeItem('nash-scores');renderHome()}}
+
+// ── QUIZ ──────────────────────────────────────────────────────────────────────
+function startQuiz(domainId){
+  currentDomain=domainId;
+  if(domainId==='mix'){
+    quizQuestions=shuffle(Object.entries(DOMAINS).flatMap(([id,d])=>d.qs.map(q=>({...q,domainId:id,domainName:d.name,domainColor:d.color}))));
+  } else {
+    const d=DOMAINS[domainId];
+    quizQuestions=shuffle(d.qs).map(q=>({...q,domainId,domainName:d.name,domainColor:d.color}));
+  }
+  currentIdx=0;results=[];
+  showScreen('quiz-screen');
+  renderQuestion();
+}
+
+function renderQuestion(){
+  answered=false;
+  const q=quizQuestions[currentIdx];
+  const d=currentDomain==='mix'?{color:q.domainColor,name:q.domainName}:DOMAINS[currentDomain];
+
+  // Badge
+  const badge=document.getElementById('domain-badge');
+  badge.textContent=(currentDomain==='mix'?q.domainName:d.name);
+  badge.style.color=q.domainColor||d.color;
+  badge.style.borderColor=(q.domainColor||d.color)+'80';
+
+  // Progress
+  const pct=(currentIdx/quizQuestions.length)*100;
+  const pf=document.getElementById('progress-fill');
+  pf.style.width=pct+'%';
+  pf.style.background=`linear-gradient(90deg,${q.domainColor||d.color},${q.domainColor||d.color}CC)`;
+  pf.style.color=q.domainColor||d.color;
+
+  // Counter
+  document.getElementById('q-counter').textContent=`Question ${currentIdx+1} of ${quizQuestions.length}${currentDomain==='mix'?' · '+q.domainName:''}`;
+
+  // Question
+  document.getElementById('q-text').textContent=q.q;
+
+  // Options
+  const opts=document.getElementById('options');
+  opts.innerHTML='';
+  q.opts.forEach((o,i)=>{
+    const btn=document.createElement('button');
+    btn.className='opt-btn';
+    btn.innerHTML=`<span class="opt-letter">${LETTERS[i]}</span><span class="opt-text">${o}</span>`;
+    btn.onclick=()=>selectAnswer(i);
+    opts.appendChild(btn);
+  });
+
+  // Feedback
+  document.getElementById('feedback').style.display='none';
+
+  // Next btn
+  const nb=document.getElementById('next-btn');
+  nb.disabled=true;
+  nb.textContent=currentIdx+1>=quizQuestions.length?'View Results →':'Next Question →';
+  nb.style.background='';
+
+  // Timer
+  startTimer(q.domainColor||d.color);
+}
+
+function startTimer(color){
+  clearInterval(timerInterval);
+  timeLeft=60;
+  updateTimerDisplay();
+  timerInterval=setInterval(()=>{
+    timeLeft--;
+    updateTimerDisplay();
+    if(timeLeft<=0){clearInterval(timerInterval);handleTimeout()}
+  },1000);
+}
+
+function updateTimerDisplay(){
+  const el=document.getElementById('timer');
+  const m=Math.floor(timeLeft/60);
+  const s=timeLeft%60;
+  el.textContent=`⏱ ${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+  el.className='timer'+(timeLeft<=10?' warn':'');
+}
+
+function handleTimeout(){
+  if(answered)return;
+  answered=true;
+  const q=quizQuestions[currentIdx];
+  results.push({correct:false,timedOut:true});
+  saveScore(q.domainId,false);
+  // Highlight correct
+  document.querySelectorAll('.opt-btn').forEach((b,i)=>{
+    b.disabled=true;
+    if(i===q.ans)b.className='opt-btn correct';
+    else b.className='opt-btn wrong';
+  });
+  showFeedback(false,'⏰ Time\'s up!',q.exp);
+  enableNext(q.domainColor||DOMAINS[currentDomain]?.color||'var(--gold)');
+}
+
+function selectAnswer(idx){
+  if(answered)return;
+  answered=true;
+  clearInterval(timerInterval);
+  const q=quizQuestions[currentIdx];
+  const isCorrect=idx===q.ans;
+  results.push({correct:isCorrect});
+  saveScore(q.domainId,isCorrect);
+
+  document.querySelectorAll('.opt-btn').forEach((b,i)=>{
+    b.disabled=true;
+    if(i===q.ans)b.className='opt-btn correct';
+    else if(i===idx&&!isCorrect)b.className='opt-btn wrong';
+    else b.className='opt-btn wrong';
+  });
+
+  showFeedback(isCorrect,isCorrect?'✓ Correct!':'✗ Incorrect',q.exp);
+  enableNext(q.domainColor||DOMAINS[currentDomain]?.color||'var(--gold)');
+}
+
+function showFeedback(correct,head,text){
+  const fb=document.getElementById('feedback');
+  fb.className='feedback '+(correct?'correct':'wrong');
+  fb.innerHTML=`<div class="fb-head">${head}</div><div class="fb-text">${text}</div>`;
+  fb.style.display='block';
+}
+
+function enableNext(color){
+  const nb=document.getElementById('next-btn');
+  nb.disabled=false;
+  nb.style.background=`linear-gradient(135deg,${color},${color}AA)`;
+}
+
+function nextQuestion(){
+  if(currentIdx+1>=quizQuestions.length){showResults();return}
+  currentIdx++;
+  renderQuestion();
+}
+
+function goHome(){
+  clearInterval(timerInterval);
+  showScreen('home-screen');
+  renderHome();
+}
+
+// ── RESULTS ───────────────────────────────────────────────────────────────────
+function showResults(){
+  clearInterval(timerInterval);
+  const correct=results.filter(r=>r.correct).length;
+  const total=results.length;
+  const pct=Math.round(correct/total*100);
+  const passed=pct>=75;
+  const dname=currentDomain==='mix'?'All Domains Mix':DOMAINS[currentDomain].full;
+
+  document.getElementById('r-icon').textContent=passed?'🏆':'📖';
+  document.getElementById('r-title').textContent=passed?'Well Done!':'Keep Practicing';
+  document.getElementById('r-title').style.color=passed?'var(--gold)':'var(--text)';
+  document.getElementById('r-sub').textContent=`${currentDomain==='mix'?'All Domains Mix':DOMAINS[currentDomain].name} · ${dname}`;
+
+  const col=passed?'var(--green)':pct>=50?'var(--gold)':'var(--red)';
+  const sc=document.getElementById('score-circle');
+  sc.style.borderColor=col;
+  sc.style.boxShadow=`0 0 40px ${passed?'rgba(80,200,120,0.25)':'rgba(201,168,76,0.2)'}`;
+  document.getElementById('score-num').textContent=correct;
+  document.getElementById('score-num').style.color=col;
+  document.getElementById('score-den').textContent=`out of ${total}`;
+  document.getElementById('score-pct').textContent=pct+'%';
+  document.getElementById('score-pct').style.color=col;
+
+  document.getElementById('r-correct').textContent=`${correct} / ${total}`;
+  document.getElementById('r-wrong').textContent=total-correct;
+  document.getElementById('r-pct').textContent=pct+'%';
+  document.getElementById('r-pct').style.color=col;
+  const rpass=document.getElementById('r-pass');
+  rpass.textContent=passed?'PASSED ✓':'NOT YET ✗';
+  rpass.style.color=passed?'var(--green)':'var(--red)';
+  document.getElementById('r-domain').textContent=dname;
+
+  document.getElementById('r-recommend').textContent=passed
+    ?`🎉 Excellent! You scored ${pct}% — above the 75% passing threshold. Your mastery of ${dname} is strong. Continue reviewing other domains to ensure full readiness for NASH.`
+    :`💡 You scored ${pct}% this round. Review the explanations for questions you missed, then re-take this domain. Aim for 75% or higher before the actual NASH exam. Consistent practice is key!`;
+
+  showScreen('results-screen');
+}
+
+function retryQuiz(){startQuiz(currentDomain)}
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+renderHome();
+</script>
+</body>
+</html>
